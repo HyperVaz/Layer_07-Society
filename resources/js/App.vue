@@ -5,12 +5,15 @@
             Hell no!
         </h1>
         <div>
-            <router-link v-if="!token" :to="{ name: 'user.login' }">Login</router-link>
-            <router-link v-if="token" :to="{ name: 'user.personal' }">Personal</router-link>
-            <router-link v-if="!token" :to="{ name: 'user.registration' }">Registration</router-link>
-            <a v-if="token" @click.prevent="logout" href="#">Logout</a>
+            <div class="flex justify-between p-8 w-96 mx-auto">
+                <router-link v-if="!token" :to="{ name: 'user.login'}">Login</router-link>
+                <router-link v-if="token" :to="{ name: 'user.personal'}">Personal</router-link>
+                <router-link v-if="!token" :to="{ name: 'user.registration'}">Registration</router-link>
+                <a v-if="token" @click.prevent="logout" href="#">Logout</a>
+            </div>
             <router-view></router-view>
         </div>
+
 
 
 
