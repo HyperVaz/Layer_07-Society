@@ -21,7 +21,7 @@
                 <img :src="image.url" alt="preview">
             </div>
         <div>
-            <a href="#"
+            <a @click.prevent="store" href="#"
                class="block p-2 w-32 h-10 text-center rounded-3xl bg-green-600 text-white hover:bg-white hover:border hover:border-green-600 hover:text-green-600 box-border">Publish</a>
         </div>
     </div>
@@ -41,6 +41,19 @@ export default {
         }
     },
     methods:{
+        store() {
+            const id = this.image ? this.image.id : null
+            axios.post('/api/posts', {title: this.title, content: this.content, image_id: id})
+                .then(res => {
+                    this.title = ''
+                    this.content = ''
+                    this.image = null
+                    // this.posts.unshift(res.data.data)
+                })
+                .catch( e => {
+                    this.errors = e.response.data.errors
+                })
+        },
         selectFile() {
             this.fileInput = this.$refs.file;
             this.fileInput.click();
@@ -50,7 +63,7 @@ export default {
             const formData = new FormData()
             formData.append('image', file)
 
-            axios.post('/api/post_image', formData)
+            axios.post('/api/post_images', formData)
                 .then(res => {
                     this.image = res.data.data;
                 })
