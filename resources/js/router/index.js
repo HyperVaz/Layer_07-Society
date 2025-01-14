@@ -4,14 +4,16 @@ const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
-            path: '/users/index',
-            component: () => import('../views/user/Index.vue'),
+            path: '/users/index', component: () => import('../views/user/Index.vue'),
             name: 'user.index'
         },
         {
-            path: '/users/:id',
-            component: () => import('../views/user/Show.vue'),
+            path: '/users/:id/show', component: () => import('../views/user/Show.vue'),
             name: 'user.show'
+        },
+        {
+            path: '/users/feed', component: () => import('../views/user/Feed.vue'),
+            name: 'user.feed'
         },
         {
             path: '/users/login',
