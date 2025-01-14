@@ -2,9 +2,12 @@
     <div class="w-96 mx-auto">
         <div v-if="users">
             <div class="mb-6 pb-6 border-b border-gray-400" v-for="user in users">
-                <p>{{ user.id }}</p>
-                <p>{{ user.name }}</p>
-                <p>{{ user.email }}</p>
+                <router-link :to="{name: 'user.show', params: {id: user.id}}">
+                    <p>{{ user.id }}</p>
+                    <p>{{ user.name }}</p>
+                    <p>{{ user.email }}</p>
+                </router-link>
+
             </div>
         </div>
     </div>

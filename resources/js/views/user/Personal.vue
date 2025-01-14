@@ -28,13 +28,9 @@
 
     <div v-if="posts">
         <h1 class="mb-8 pb-8 border-b border-gray-400">Posts</h1>
-        <div v-for="post in posts" class="mb-8 pb-8 border-b border-gray-400">
-            <h1 text-xl>{{ post.title }}</h1>
-            <img class="my-3" v-if="post.image_url" :src="post.image_url" :alt="post.title">
-            <p>{{ post.content }}</p>
-            <p class="text-right text-sm">{{ post.date }}</p>
-        </div>
+        <Post v-for="post in posts" :post="post"></Post>
     </div>
+
 
 </template>
 
@@ -51,6 +47,9 @@ export default {
             image: null,
             posts: []
         }
+    },
+    components:{
+        Post
     },
     mounted() {
         this.getPosts();
