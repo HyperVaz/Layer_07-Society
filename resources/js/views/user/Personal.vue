@@ -25,6 +25,17 @@
                class="block p-2 w-32 h-10 text-center rounded-3xl bg-green-600 text-white hover:bg-white hover:border hover:border-green-600 hover:text-green-600 box-border">Publish</a>
         </div>
     </div>
+
+    <div v-if="posts">
+        <h1 class="mb-8 pb-8 border-b border-gray-400">Posts</h1>
+        <div v-for="post in posts" class="mb-8 pb-8 border-b border-gray-400">
+            <h1 text-xl>{{ post.title }}</h1>
+            <img class="my-3" v-if="post.image_url" :src="post.image_url" :alt="post.title">
+            <p>{{ post.content }}</p>
+            <p class="text-right text-sm">{{ post.date }}</p>
+        </div>
+    </div>
+
 </template>
 
 
@@ -38,9 +49,20 @@ export default {
             title: '',
             content: '',
             image: null,
+            posts: []
         }
     },
+    mounted() {
+        this.getPosts();
+    },
     methods:{
+        getPosts() {
+            axios.get('/api/posts')
+                .then(res => {
+                    this.posts = res.data.data
+                })
+        },
+
         store() {
             const id = this.image ? this.image.id : null
             axios.post('/api/posts', {title: this.title, content: this.content, image_id: id})
@@ -48,7 +70,7 @@ export default {
                     this.title = ''
                     this.content = ''
                     this.image = null
-                    // this.posts.unshift(res.data.data)
+                    this.posts.unshift(res.data.data)
                 })
                 .catch( e => {
                     this.errors = e.response.data.errors
