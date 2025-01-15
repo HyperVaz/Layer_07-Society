@@ -1,28 +1,34 @@
 <template>
     <div class="w-96 mx-auto">
         <div>
-            <input v-model="title" class="w-96 mb-3 rounded-3xl border p-2 border-slate-300" type="text" placeholder="">
+            <input v-model="title" class="w-96 mb-5 rounded-3xl border p-2 border-slate-300" type="text"
+                   placeholder="Write your post title!">
         </div>
         <div>
             <textarea v-model="content" class="w-96 mb-3 rounded-3xl border p-2 border-slate-300"
-                      placeholder=""></textarea>
+                      placeholder="What can you say to us?"></textarea>
         </div>
-        <div class="flex mb-3 items-center">
+        <div class="flex mb-3 justify-between">
             <div>
                 <input @change="storeImage" ref="file" type="file" class="hidden">
-                <a href="#" class="block p-2 w-32 h-10 text-center rounded-3xl bg-green-600 text-white hover:bg-white hover:border hover:border-green-600 hover:text-green-600 box-border" @click.prevent="selectFile()">Image</a>
+                <a href="#"
+                   class="block p-2 w-32 h-10 text-center rounded-3xl bg-orange-600 text-white hover:bg-white hover:border hover:border-green-600 hover:text-black-600 box-border"
+                   @click.prevent="selectFile()">Image</a>
             </div>
             <div>
-                <a @click.prevent="image = null" href="#">Cancel</a>
+
             </div>
 
-        </div>
-            <div v-if="image">
-                <img :src="image.url" alt="preview">
+
+
+            <div>
+                <a @click.prevent="store" href="#"
+                   class="block p-2 w-32 h-10 text-center rounded-3xl bg-black-600 text-white hover:bg-white hover:border hover:border-green-600 hover:text-green-600 box-border">Publish</a>
             </div>
-        <div>
-            <a @click.prevent="store" href="#"
-               class="block p-2 w-32 h-10 text-center rounded-3xl bg-green-600 text-white hover:bg-white hover:border hover:border-green-600 hover:text-green-600 box-border">Publish</a>
+        </div>
+        <div v-if="image">
+            <img :src="image.url" alt="preview">
+            <a class="text-red-600" v-if="image" @click.prevent="image = null" href="#">Cancel/back</a>
         </div>
     </div>
 
@@ -38,6 +44,7 @@
 <script>
 import Post from "../../components/Post.vue";
 import Stat from "../../components/Stat.vue";
+
 export default {
     name: "Personal",
     data() {
@@ -48,13 +55,13 @@ export default {
             posts: []
         }
     },
-    components:{
+    components: {
         Post
     },
     mounted() {
         this.getPosts();
     },
-    methods:{
+    methods: {
         getPosts() {
             axios.get('/api/posts')
                 .then(res => {
@@ -71,7 +78,7 @@ export default {
                     this.image = null
                     this.posts.unshift(res.data.data)
                 })
-                .catch( e => {
+                .catch(e => {
                     this.errors = e.response.data.errors
                 })
         },

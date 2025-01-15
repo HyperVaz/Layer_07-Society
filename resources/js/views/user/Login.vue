@@ -6,8 +6,9 @@
         <div>
             <input v-model="password" type="password" placeholder="password" class="w-96 p-1 mb-2 border border-inherit rounded-lg">
         </div>
-        <input @click.prevent="login" type="submit" value="login"
-               class="block float-right mx-auto w-32 p-1 bg-sky-400 text-white rounded-lg border">
+        <button @click.prevent="login"
+                class="cursor-pointer block float-right mx-auto w-32 p-1 bg-indigo-600 text-white rounded-lg border">Log in
+        </button>
     </div>
 
 </template>

@@ -27,8 +27,11 @@ class UserController extends Controller
 
     public function post(User $user)
     {
+        $posts = $user->posts()->latest()->get();
+        $posts = $this->prepareLikedPosts($posts);
         return \App\Http\Resources\Post\PostResource::collection($user->posts);
     }
+
     public function toggleFollowing(User $user)
     {
         $res = auth()->user()->followings()->toggle($user->id);
@@ -40,17 +43,23 @@ class UserController extends Controller
     public function followingPosts()
     {
         $followedIds = auth()->user()->followings()->latest()->get()->pluck('id')->toArray();
-
-        $likedPostIds = LikedPost::where('user_id', auth()->id())
-            ->get('post_id')->pluck('post_id')->toArray();
-
-        $posts = Post::whereIn('user_id', $followedIds)->withCount('repostedByPosts')
-            ->whereNotIn('id', $likedPostIds)->get();
-
-
+        $likedPostIds = LikedPost::where('user_id', auth()->id())->get('post_id')->pluck('post_id')->toArray();
+        $posts = Post::whereIn('user_id', $followedIds)->whereNotIn('id', $likedPostIds)->get();
 
         return PostResource::collection($posts);
+
     }
 
+    private function prepareLikedPosts($posts)
+    {
+        $likedPostIds = LikedPost::where('user_id', auth()->id())->pluck('post_id')->toArray();
+        foreach ($posts as $post) {
+            if (in_array($post->id, $likedPostIds)) {
+                $post->is_liked = true;
+            }
+        }
+            return $posts;
+
+    }
 }
 

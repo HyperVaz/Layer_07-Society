@@ -10,10 +10,11 @@
             <input v-model="password" type="password" placeholder="password" class="w-96 p-1 mb-2 border border-inherit rounded-lg">
         </div>
         <div>
-            <input v-model="password_confirmation" type="password" placeholder="password_confirmation" class="w-96 p-1 mb-2 border border-inherit rounded-lg">
+            <input v-model="password_confirmation" type="password" placeholder="password confirmation"
+                   class="w-96 p-1 mb-2 border border-inherit rounded-lg">
         </div>
-        <input @click.prevent="register" type="submit" value="register"
-               class="block float-right mx-auto w-32 p-1 bg-sky-400 text-white rounded-lg border">
+        <button @click.prevent="register"
+                class="cursor-pointer text-center block float-right mx-auto w-32 p-1 bg-indigo-600 text-white rounded-lg border">Register</button>
     </div>
 
 </template>
