@@ -22,6 +22,7 @@ class PostResource extends JsonResource
             'image_url' => $url,
             'date' => $this->date,
             'is_liked' => $this->is_liked ?? false,
+            'likes_count' => $this->likedUsers->count(),
         ];
 
 
