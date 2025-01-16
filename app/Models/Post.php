@@ -10,7 +10,7 @@ class Post extends Model
     protected $table = 'posts';
     protected $guarded = false;
 
-    protected $with = ['image', 'likedUsers'];
+    protected $with = ['image', 'likedUsers', 'repostedPost'];
 
     public function image()
     {
@@ -26,5 +26,10 @@ class Post extends Model
     {
         return $this->created_at->diffForHumans();
     }
+    public function repostedPost()
+    {
+        return $this->belongsTo(Post::class, 'reposted_id', 'id');
+    }
+
 
 }
