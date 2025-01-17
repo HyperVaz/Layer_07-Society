@@ -51,6 +51,18 @@
             </div>
         </div>
 
+        <div class="mt-4">
+                <div class="mb-3">
+                    <input v-model="body" class="w-96 rounded-3xl border p-2 border-slate-380" type="text" placeholder="title">
+                </div>
+                <div>
+                    <a @click.prevent="storeComment(post)" href="#"
+                       class="block p-2 w-32 h-10 text-center rounded-3xl bg-black-600 text-white hover:bg-white hover:border hover:border-green-600 hover:text-green-600 box-border">Comment</a>
+                </div>
+
+
+        </div>
+
     </div>
 </template>
 
@@ -64,6 +76,7 @@ export default {
         return{
             title: '',
             content: '',
+            body: '',
             is_repost: false,
             repostedId: null
         }
@@ -76,6 +89,15 @@ export default {
                     post.likes_count = res.data.likes_count
                 })
         },
+        storeComment(post) {
+            axios.post(`/api/posts/${post.id}/comment`, { body: this.body })
+                .then(res => {
+                    this.body = '';
+                    console.log(res);
+                })
+        },
+
+
         openRepost() {
             if (this.isPersonal()) return
             this.is_repost = !this.is_repost
