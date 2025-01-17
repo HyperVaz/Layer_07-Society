@@ -92,6 +92,12 @@ class PostController extends Controller
         $comment = Comment::create($data);
         return new CommentResource($comment);
     }
+    public function commentList(Post $post)
+    {
+        $comments = $post->comments()->get();
+        return CommentResource::collection($comments);
+    }
+
 
 
 }

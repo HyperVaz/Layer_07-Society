@@ -90,6 +90,7 @@ export default {
                 })
                 .catch(e => {
                     this.errors = e.response.data.errors;
+
                 })
 
         },

@@ -16,6 +16,10 @@ class Comment extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+    public function getDateAttribute()
+    {
+        return $this->created_at->diffForHumans();
+    }
 
 }
 
