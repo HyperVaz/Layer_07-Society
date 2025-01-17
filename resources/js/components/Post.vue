@@ -52,8 +52,11 @@
         </div>
 
         <div v-if="post.comments_count > 0" class="mt-4">
-            <p @click="getComments(post)">Show {{ post.comments_count }} comments</p>
-            <div v-if="comments">
+
+            <p v-if="!isShowed" @click="getComments(post)">Show {{ post.comments_count }} comments</p>
+            <p v-if="isShowed" @click="isShowed=false"> close</p>
+
+            <div v-if="comments && isShowed">
                 <div v-for="comment in comments" class="mt-4 pt-4 border-t border-gray-300">
                     <p class="text-sm">{{ comment.user.name }}</p>
                     <p>{{ comment.body }}</p>
@@ -95,7 +98,8 @@ export default {
             is_repost: false,
             repostedId: null,
             errors: [],
-            comments: []
+            comments: [],
+            isShowed: false
         }
     },
     methods: {
@@ -110,17 +114,17 @@ export default {
             axios.post(`/api/posts/${post.id}/comment`, { body: this.body })
                 .then(res => {
                     this.body = '';
-                    console.log(res);
+                    this.comments.unshift(res.data.data)
+                    post.comments_count++;
+                    this.isShowed = true
                 })
-                .catch(e => {
-                this.errors = e.response.data.errors;
-            })
         },
 
         getComments(post) {
             axios.get(`/api/posts/${post.id}/comment`)
                 .then(res => {
                     this.comments = res.data.data;
+                    this.isShowed = true
                 })
         },
 
