@@ -54,6 +54,9 @@
         <div class="mt-4">
                 <div class="mb-3">
                     <input v-model="body" class="w-96 rounded-3xl border p-2 border-slate-380" type="text" placeholder="title">
+                    <div v-if="errors.title">
+                        <p v-for="error in errors.title" class="text-red-500">{{ error }}</p>
+                    </div>
                 </div>
                 <div>
                     <a @click.prevent="storeComment(post)" href="#"
@@ -78,7 +81,8 @@ export default {
             content: '',
             body: '',
             is_repost: false,
-            repostedId: null
+            repostedId: null,
+            errors: [],
         }
     },
     methods: {
@@ -95,6 +99,9 @@ export default {
                     this.body = '';
                     console.log(res);
                 })
+                .catch(e => {
+                this.errors = e.response.data.errors;
+            })
         },
 
 

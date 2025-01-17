@@ -3,10 +3,18 @@
         <div>
             <input v-model="title" class="w-96 mb-5 rounded-3xl border p-2 border-slate-300" type="text"
                    placeholder="Write your post title!">
+            <div v-if="errors.title">
+                <p v-for="error in errors.title" class="text-red-500">{{ error }}</p>
+            </div>
+
         </div>
         <div>
             <textarea v-model="content" class="w-96 mb-3 rounded-3xl border p-2 border-slate-300"
                       placeholder="What can you say to us?"></textarea>
+            <div v-if="errors.content">
+                <p v-for="error in errors.content" class="text-red-500">{{ error }}</p>
+            </div>
+
         </div>
         <div class="flex mb-3 justify-between">
             <div>
@@ -52,7 +60,9 @@ export default {
             title: '',
             content: '',
             image: null,
-            posts: []
+            posts: [],
+            errors: [],
+
         }
     },
     components: {
@@ -79,8 +89,9 @@ export default {
                     this.posts.unshift(res.data.data)
                 })
                 .catch(e => {
-                    this.errors = e.response.data.errors
+                    this.errors = e.response.data.errors;
                 })
+
         },
         selectFile() {
             this.fileInput = this.$refs.file;
