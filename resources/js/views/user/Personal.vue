@@ -1,5 +1,6 @@
 <template>
     <div class="w-96 mx-auto">
+        <Stat :stats="stats"></Stat>
         <div>
             <input v-model="title" class="w-96 mb-5 rounded-3xl border p-2 border-slate-300" type="text"
                    placeholder="Write your post title!">
@@ -62,16 +63,25 @@ export default {
             image: null,
             posts: [],
             errors: [],
+            stats: [],
 
         }
     },
     components: {
-        Post
+        Post, Stat
     },
     mounted() {
         this.getPosts();
+        this.getStats();
     },
     methods: {
+        getStats() {
+            axios.post('/api/users/stats', { id: null })
+                .then(res => {
+                    console.log(res);
+                    this.stats = res.data.data;
+                })
+        },
         getPosts() {
             axios.get('/api/posts')
                 .then(res => {
