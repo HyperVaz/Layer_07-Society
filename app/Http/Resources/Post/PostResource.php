@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Post;
 
+use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -20,6 +21,7 @@ class PostResource extends JsonResource
             'title' => $this->title,
             'content' => $this->content,
             'image_url' => $url,
+            'user' => new UserResource($this->user),
             'date' => $this->date,
             'is_liked' => $this->is_liked ?? false,
             'likes_count' => $this->likedUsers->count(),

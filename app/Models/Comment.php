@@ -10,7 +10,7 @@ class Comment extends Model
     protected $table = 'comments';
     protected $guarded = false;
 
-    protected $with = ['user'];
+    protected $with = ['user', 'parent'];
 
     public function user()
     {
@@ -20,6 +20,12 @@ class Comment extends Model
     {
         return $this->created_at->diffForHumans();
     }
+
+    public function parent()
+    {
+        return $this->belongsTo(Comment::class, 'parent_id', 'id');
+    }
+
 
 }
 

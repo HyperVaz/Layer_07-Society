@@ -1,16 +1,22 @@
 <template>
     <div class="mb-8 pb-8 border-b border-gray-400">
         <h1 class="text-xl">{{ post.title }}</h1>
+        <router-link class="text-sm text-gray-800" :to="{name: 'user.show', params: {id: post.user.id}} ">
+            {{ post.user.name }}
+        </router-link>
         <img class="my-3 mx-auto" v-if="post.image_url" :src="post.image_url" :alt="post.title">
         <p>{{ post.content }}</p>
 
         <div v-if="post.reposted_post" class="bg-gray-100 p-4 my-4 border border-gray-200">
             <h1 class="text-xl">{{ post.reposted_post.title }}</h1>
-
+            <router-link class="text-sm text-gray-800" :to="{name: 'user.show', params: {id: post.reposted_post.user.id}}
+         ">{{ post.reposted_post.user.name }}
+            </router-link>
             <img class="my-3 mx-auto" v-if="post.reposted_post.image_url" :src="post.reposted_post.image_url"
                  :alt="post.reposted_post.title"/>
             <p>{{ post.reposted_post.content }}</p>
         </div>
+
 
         <div class="flex justify-between mt-2 items-center">
             <div>
@@ -53,13 +59,21 @@
 
         <div v-if="post.comments_count > 0" class="mt-4">
 
-            <p v-if="!isShowed" @click="getComments(post)">Show {{ post.comments_count }} comments</p>
-            <p v-if="isShowed" @click="isShowed=false"> close</p>
+            <p class="cursor-pointer" v-if="!isShowed" @click="getComments(post)">Show {{ post.comments_count }}
+                comments</p>
+            <p class="cursor-pointer" v-if="isShowed" @click="isShowed=false"> close</p>
 
             <div v-if="comments && isShowed">
                 <div v-for="comment in comments" class="mt-4 pt-4 border-t border-gray-300">
-                    <p class="text-sm">{{ comment.user.name }}</p>
-                    <p>{{ comment.body }}</p>
+                    <div class="flex mb-2">
+                        <p class="text-sm mr-2">{{ comment.user.name }}</p>
+                        <p @click="setParentId(comment)" class="text-sm text-sky-500 cursor-pointer">Answer</p>
+                    </div>
+
+                    <p><span v-if="comment.answered_for_user" class="text-sky-400">{{ comment.answered_for_user }},
+                    </span>{{
+                            comment.body
+                        }}</p>
                     <p class="text-right text-sm">{{ comment.date }}</p>
                 </div>
             </div>
@@ -67,16 +81,24 @@
 
 
         <div class="mt-4">
-                <div class="mb-3">
-                    <input v-model="body" class="w-96 rounded-3xl border p-2 border-slate-380" type="text" placeholder="title">
-                    <div v-if="errors.body">
-                        <p v-for="error in errors.body" class="text-red-500">{{ error }}</p>
-                    </div>
+            <div class="mb-3">
+
+                <div class="flex">
+                    <p v-if="comment">Answered for {{ comment.user.name }}</p>
+                    <p v-if="comment" @click="comment = null" class="cursor-pointer text-sm">Cancel</p>
                 </div>
-                <div>
-                    <a @click.prevent="storeComment(post)" href="#"
-                       class="block p-2 w-32 h-10 text-center rounded-3xl bg-black-600 text-white hover:bg-white hover:border hover:border-green-600 hover:text-green-600 box-border">Comment</a>
+
+
+                <input v-model="body" class="w-96 rounded-3xl border p-2 border-slate-380" type="text"
+                       placeholder="title">
+                <div v-if="errors.body">
+                    <p v-for="error in errors.body" class="text-red-500">{{ error }}</p>
                 </div>
+            </div>
+            <div>
+                <a @click.prevent="storeComment(post)" href="#"
+                   class="block p-2 w-32 h-10 text-center rounded-3xl bg-black-600 text-white hover:bg-white hover:border hover:border-green-600 hover:text-green-600 box-border">Comment</a>
+            </div>
 
 
         </div>
@@ -90,8 +112,8 @@ export default {
     props: [
         'post'
     ],
-    data(){
-        return{
+    data() {
+        return {
             title: '',
             content: '',
             body: '',
@@ -99,7 +121,8 @@ export default {
             repostedId: null,
             errors: [],
             comments: [],
-            isShowed: false
+            isShowed: false,
+            comment: null
         }
     },
     methods: {
@@ -110,11 +133,18 @@ export default {
                     post.likes_count = res.data.likes_count
                 })
         },
+
+        setParentId(comment) {
+            this.comment = comment;
+        },
+
+
         storeComment(post) {
-            axios.post(`/api/posts/${post.id}/comment`, { body: this.body })
+            axios.post(`/api/posts/${post.id}/comment`, {body: this.body, parent_id: this.comment.id})
                 .then(res => {
                     this.body = '';
                     this.comments.unshift(res.data.data)
+                    this.comment = null
                     post.comments_count++;
                     this.isShowed = true
                 })
@@ -127,7 +157,6 @@ export default {
                     this.isShowed = true
                 })
         },
-
 
 
         openRepost() {
