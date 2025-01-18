@@ -140,7 +140,8 @@ export default {
 
 
         storeComment(post) {
-            axios.post(`/api/posts/${post.id}/comment`, {body: this.body, parent_id: this.comment.id})
+            const commentId = this.comment ? this.comment.id : null;
+            axios.post(`/api/posts/${post.id}/comment`, {body: this.body, parent_id: commentId})
                 .then(res => {
                     this.body = '';
                     this.comments.unshift(res.data.data)
