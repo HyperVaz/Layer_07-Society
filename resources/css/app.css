@@ -1,3 +1,118 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+*{
+    box-sizing: border-box;
+}
+body{
+    background: rgb(233, 229, 229);
+}
+.logo{
+    width: 100%;
+}
+.logo img{
+    width: 60%;
+}
+.header{
+    margin: 0 auto;
+}
+.header__logo{
+    margin: 0 auto;
+    width: 100%;
+    margin-top: 10px;
+}
+.container, .footer{
+    margin: 0 auto;
+    width: 45%;
+    box-shadow: -11px 7px 10px 8px rgba(34, 60, 80, 0.22);
+    border-radius: 8px;
+    margin-top: 25px;
+    padding-bottom: 55px;
+    padding-left: 15px;
+    padding-right: 15px;
+    background: #fff;
+}
+.nav__link {
+    background: #280b45;
+    padding: 10px 20px;
+    border-radius: 15px;
+    position: relative; /* Нужен для позиционирования псевдоэлемента */
+    text-decoration: none; /* Убираем дефолтное подчеркивание */
+    color: wheat; /*  Цвет текста */
+    transition: color 0.3s ease; /* Переход цвета */
+}
+
+.nav__link::after {
+    content: ''; /* Псевдоэлемент */
+    position: absolute;
+    left: 0;
+    bottom: -3px; /* Выравнивание псевдоэлемента снизу */
+    width: 0; /* Изначально подчеркивание шириной 0 */
+    height: 2px;
+    transition: width 0.3s ease; /* Плавный переход для ширины подчеркивания */
+}
+
+.nav__link:hover {
+    color: #ffe98a; /* Цвет текста при наведении */
+}
+
+.nav__link:hover::after {
+    width: 100%; /* Делаем подчеркивание шириной 100% при наведении */
+}
+.btn{
+    background: #280b45;
+    color: wheat;
+}
+nav .nav{
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    margin: 0 auto;
+}
+.footer{
+    width: 90%;
+}
+.post__text {
+    font-size: 53px;
+    /* Остальные стили вашего текста */
+    animation: pulse 1.2s ease-in-out infinite alternate;
+    transform-origin: center;
+}
+
+@keyframes pulse {
+    from {
+        transform: scale(1); /* Исходный размер */
+    }
+    to {
+        transform: scale(1.05); /* Немного увеличенный размер */
+    }
+}
+.comments-container {
+    overflow: hidden;
+    max-height: 0; /* Изначальная высота 0 */
+    opacity: 0; /* Изначальная прозрачность 0 */
+    transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+.comments-container--show{
+    max-height: 1000px;
+    opacity: 1;
+}
+.comments-inner{
+    padding: 15px 0px;
+}
+.repost-content {
+    overflow-wrap: break-word;
+    word-break: break-all; /* Дополнительный способ переноса */
+    line-height: 1.6;
+    white-space: pre-wrap;
+    line-height: 1.6;
+    max-width: 100%; /* Максимальная ширина */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Многоточие */
+    white-space: nowrap; /* Запрещаем перенос строки */
+    line-height: 1.6;
+}
+
+
+

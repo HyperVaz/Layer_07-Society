@@ -21,7 +21,7 @@
             <div>
                 <input @change="storeImage" ref="file" type="file" class="hidden">
                 <a href="#"
-                   class="block p-2 w-32 h-10 text-center rounded-3xl bg-orange-600 text-white hover:bg-white hover:border hover:border-green-600 hover:text-black-600 box-border"
+                   class="block p-2 w-32 h-10 text-center rounded-3xl bg-amber-200 text-violet-950 hover:bg-white hover:bg-violet-950 hover:text-amber-200 hover:border-green-600 hover:text-black-600 box-border"
                    @click.prevent="selectFile()">Image</a>
             </div>
             <div>
@@ -32,7 +32,7 @@
 
             <div>
                 <a @click.prevent="store" href="#"
-                   class="block p-2 w-32 h-10 text-center rounded-3xl bg-black-600 text-white hover:bg-white hover:border hover:border-green-600 hover:text-green-600 box-border">Publish</a>
+                   class="bg-violet-950 hover:bg-amber-200 block p-2 w-32 h-10 text-center rounded-3xl bg-black-600 text-amber-200 hover:text-violet-950 hover:text-green-600 box-border">Publish</a>
             </div>
         </div>
         <div v-if="image">
@@ -42,7 +42,7 @@
     </div>
 
     <div v-if="posts">
-        <h1 class="mb-8 pb-8 border-b border-gray-400">Posts</h1>
+        <h1 class="post__text mb-8 pb-8 border-b border-gray-400 text-center">Your posts</h1>
         <Post v-for="post in posts" :post="post"></Post>
     </div>
 

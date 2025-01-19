@@ -1,25 +1,41 @@
 <template>
     <div class="mb-8 pb-8 border-b border-gray-400">
-        <h1 class="text-xl">{{ post.title }}</h1>
-        <router-link class="text-sm text-gray-800" :to="{name: 'user.show', params: {id: post.user.id}} ">
-            {{ post.user.name }}
-        </router-link>
-        <img class="my-3 mx-auto" v-if="post.image_url" :src="post.image_url" :alt="post.title">
-        <p>{{ post.content }}</p>
+        <div>
+            From: <router-link class="text-sm text-blue-800"
+                         :to="{name: 'user.show', params: {id: post.user.id}} ">
+                 {{ post.user.name }}
+            </router-link>
+            <h1 class="text-xl">{{ post.title }}</h1>
+
+
+            <a  @click.prevent="openGallery(post.image_url, post.title, post.user.name)">
+                <img class="my-3 mx-auto" v-if="post.image_url"
+                     :src="post.image_url" :alt="post.title">
+            </a>
+
+            <p>{{ post.content }}</p>
+            <GalleryModal :imageUrl="currentImageUrl" :imageTitle="currentImageTitle"
+                          :userName="currentUserName" :isOpen="isGalleryOpen" @close="closeGallery"/>
+
+        </div>
 
         <div v-if="post.reposted_post" class="bg-gray-100 p-4 my-4 border border-gray-200">
             <h1 class="text-xl">{{ post.reposted_post.title }}</h1>
+            <a  @click.prevent="openGallery(post.reposted_post.image_url, post.reposted_post.title,
+            post.reposted_post.user.name)">
+                <img class="my-3 mx-auto"
+                 v-if="post.reposted_post.image_url" :src="post.reposted_post.image_url"
+                 :alt="post.reposted_post.title"/>
+            </a>
+            <p class="repost-content">{{ post.reposted_post.content }}</p>
             <router-link class="text-sm text-gray-800" :to="{name: 'user.show', params: {id: post.reposted_post.user.id}}
          ">{{ post.reposted_post.user.name }}
             </router-link>
-            <img class="my-3 mx-auto" v-if="post.reposted_post.image_url" :src="post.reposted_post.image_url"
-                 :alt="post.reposted_post.title"/>
-            <p>{{ post.reposted_post.content }}</p>
         </div>
 
 
         <div class="flex justify-between mt-2 items-center">
-            <div>
+            <div class="flex">
                 <div class="flex">
                     <svg @click.prevent="toggleLike(post)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                          stroke-width="1.5"
@@ -42,39 +58,45 @@
             </div>
             <p class="text-right text-slate-500 text-sm">{{ post.date }}</p>
         </div>
+
         <div v-if="is_repost" class="mt-4">
             <div>
                 <input v-model="title" class="w-96 mb-3 rounded-3xl border p-2 border-slate-300" type="text"
                        placeholder="title">
             </div>
             <div>
-              <textarea v-model="content" class="w-96 mb-3 rounded-3xl border p-2 border-slate-300"
-                        placeholder="content"></textarea>
+      <textarea v-model="content" class="w-96 mb-3 rounded-3xl border p-2 border-slate-300"
+                placeholder="content"></textarea>
             </div>
+            <a  @click.prevent="openGallery(post.image_url, post.title, post.user.name)" v-if="post.image_url">
+                <img class="my-3 mx-auto w-32 h-32 object-cover rounded-lg cursor-pointer"
+                     :src="post.image_url" :alt="post.title">
+            </a>
             <div>
                 <a @click.prevent="repost(post)" href="#" class="block p-2 w-32 text-center rounded-3xl bg-green-600 text-white
                 hover:bg-white hover:border hover:border-green-600 hover:text-green-600 box-border ml-auto">Publish</a>
             </div>
+            <GalleryModal :imageUrl="currentImageUrl" :imageTitle="currentImageTitle"
+                          :userName="currentUserName" :isOpen="isGalleryOpen" @close="closeGallery"/>
         </div>
 
         <div v-if="post.comments_count > 0" class="mt-4">
-
             <p class="cursor-pointer" v-if="!isShowed" @click="getComments(post)">Show {{ post.comments_count }}
                 comments</p>
             <p class="cursor-pointer" v-if="isShowed" @click="isShowed=false"> close</p>
-
-            <div v-if="comments && isShowed">
-                <div v-for="comment in comments" class="mt-4 pt-4 border-t border-gray-300">
-                    <div class="flex mb-2">
-                        <p class="text-sm mr-2">{{ comment.user.name }}</p>
-                        <p @click="setParentId(comment)" class="text-sm text-sky-500 cursor-pointer">Answer</p>
-                    </div>
-
-                    <p><span v-if="comment.answered_for_user" class="text-sky-400">{{ comment.answered_for_user }},
+            <div ref="commentsContainer" :class="{'comments-container': true, 'comments-container--show': isShowed}">
+                <div v-if="comments && isShowed" class="comments-inner">
+                    <div v-for="comment in comments" class="mt-4 pt-4 border-t border-gray-300">
+                        <div class="flex mb-2">
+                            <p class="text-sm mr-2">{{ comment.user.name }}</p>
+                            <p @click="setParentId(comment)" class="text-sm text-sky-500 cursor-pointer">Answer</p>
+                        </div>
+                        <p><span v-if="comment.answered_for_user" class="text-sky-400">{{ comment.answered_for_user }},
                     </span>{{
-                            comment.body
-                        }}</p>
-                    <p class="text-right text-sm">{{ comment.date }}</p>
+                                comment.body
+                            }}</p>
+                        <p class="text-right text-sm">{{ comment.date }}</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -90,14 +112,14 @@
 
 
                 <input v-model="body" class="w-96 rounded-3xl border p-2 border-slate-380" type="text"
-                       placeholder="title">
+                       placeholder="How you can comment this?">
                 <div v-if="errors.body">
                     <p v-for="error in errors.body" class="text-red-500">{{ error }}</p>
                 </div>
             </div>
             <div>
                 <a @click.prevent="storeComment(post)" href="#"
-                   class="block p-2 w-32 h-10 text-center rounded-3xl bg-black-600 text-white hover:bg-white hover:border hover:border-green-600 hover:text-green-600 box-border">Comment</a>
+                   class="bg-violet-950 hover:bg-amber-200 block p-2 w-32 h-10 text-center rounded-3xl bg-black-600 text-amber-200 hover:text-violet-950 hover:text-green-600 box-border">Comment</a>
             </div>
 
 
@@ -107,11 +129,16 @@
 </template>
 
 <script>
+import GalleryModal from "./GalleryModal.vue";
 export default {
+
     name: "Post",
     props: [
         'post'
     ],
+    components: {
+        GalleryModal
+    },
     data() {
         return {
             title: '',
@@ -122,7 +149,11 @@ export default {
             errors: [],
             comments: [],
             isShowed: false,
-            comment: null
+            comment: null,
+            isGalleryOpen: false,
+            currentImageUrl: '',
+            currentImageTitle: '',
+            currentUserName: '',
         }
     },
     methods: {
@@ -175,6 +206,16 @@ export default {
         },
         isPersonal() {
             return this.$route.name === 'user.personal';
+        },
+
+        openGallery(imageUrl, imageTitle, userName){
+            this.currentImageUrl = imageUrl;
+            this.currentImageTitle = imageTitle;
+            this.currentUserName = userName;
+            this.isGalleryOpen = true;
+        },
+        closeGallery(){
+            this.isGalleryOpen = false;
         }
     }
 

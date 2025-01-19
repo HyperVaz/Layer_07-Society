@@ -14,7 +14,7 @@
                    class="w-96 p-1 mb-2 border border-inherit rounded-lg">
         </div>
         <button @click.prevent="register"
-                class="cursor-pointer text-center block float-right mx-auto w-32 p-1 bg-indigo-600 text-white rounded-lg border">Register</button>
+                class="btn cursor-pointer text-center block float-right mx-auto w-32 p-1 bg-indigo-600 text-white rounded-lg border">Register</button>
     </div>
 
 </template>
