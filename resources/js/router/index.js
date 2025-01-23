@@ -16,6 +16,10 @@ const router = createRouter({
             name: 'user.feed'
         },
         {
+            path: '/users/edit', component: () => import('../views/user/Edit.vue'),
+            name: 'user.edit'
+        },
+        {
             path: '/users/login',
             component: () => import('../views/user/Login.vue'),
             name: 'user.login'

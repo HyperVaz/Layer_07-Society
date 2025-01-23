@@ -8,6 +8,8 @@ use App\Models\LikedPost;
 use App\Models\Post;
 use App\Models\SubscriberFollowing;
 use App\Models\User;
+use http\Client\Request;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -81,6 +83,47 @@ class UserController extends Controller
         return response()->json(['data' => $result]);
 
 
+    }
+
+    public function uploadAvatar(Request $request, $userId)
+    {
+        $request->validateImage([
+            'avatar' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Проверьте тип и размер
+        ]);
+
+        $user = User::findOrFail($userId);
+
+        if ($request->hasFile('avatar')) {
+            $image = $request->file('avatar');
+            $filename = uniqid() . '.' . $image->getClientOriginalExtension();
+            $path = 'avatars/' . $user->id;
+            $disk = 'public';
+
+
+            // Сохраняем изображение с использованием Storage::disk
+            Storage::disk($disk)->putFileAs($path, $image, $filename);
+
+            // Удаляем предыдущий аватар, если он существует
+            if ($user->avatar) {
+                Storage::disk($user->avatar->disk)->delete($user->avatar->path . '/' . $user->avatar->filename);
+                $user->avatar()->delete();
+            }
+
+
+            //  Создание аватара
+            $avatar = new \App\Models\Avatar([
+                'filename' => $filename,
+                'path' => $path,
+                'disk' => $disk,
+            ]);
+
+            $user->avatar()->save($avatar);
+
+            // Возвращаем URL нового аватара (для обновления в frontend)
+            return response()->json(['avatar_url' => Storage::disk($disk)->url($path . '/' . $filename)], 200);
+        }
+
+        return response()->json(['message' => 'Ошибка загрузки аватара'], 400);
     }
 }
 

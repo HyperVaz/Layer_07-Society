@@ -58,6 +58,11 @@ class User extends Authenticatable
 
     }
 
+    public function avatar(): HasOne
+    {
+        return $this->hasOne(Avatar::class); // Связь один к одному с моделью Avatar
+    }
+
 
 
 }

@@ -11,6 +11,7 @@
                 <router-link class="nav__link login" v-if="!token" :to="{ name: 'user.login'}">LOGIN</router-link>
                 <router-link class="nav__link" v-if="token" :to="{ name: 'user.index'}">Users</router-link>
                 <router-link class="nav__link" v-if="token" :to="{ name: 'user.feed'}">Feed</router-link>
+                <router-link class="nav__link" v-if="token" :to="{ name: 'user.edit'}">Edit</router-link>
                 <router-link class="nav__link" v-if="token" :to="{ name: 'user.personal'}">Personal</router-link>
                 <router-link class="nav__link register" v-if="!token" :to="{ name: 'user.registration'}">REGISTRATION
                 </router-link>
