@@ -6,6 +6,7 @@
         </div>
         <div class="container">
             <h1 class="text-center text-3xl pt-2.5" v-if="!token">Please, log in or register</h1>
+
             <nav class="max-w-100 flex header__router text-amber-300 flex p-8 justify-around">
                 <router-link class="nav__link login" v-if="!token" :to="{ name: 'user.login'}">LOGIN</router-link>
                 <router-link class="nav__link" v-if="token" :to="{ name: 'user.index'}">Users</router-link>
@@ -15,6 +16,7 @@
                 </router-link>
                 <a class="nav__link" v-if="token" @click.prevent="logout" href="#">Logout</a>
             </nav>
+
             <router-view></router-view>
         </div>
 
