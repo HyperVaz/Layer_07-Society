@@ -1,4 +1,5 @@
 <template>
+    <Loader :loading="loading" />
     <div class="w-96 mx-auto">
         <div v-if="users">
             <div
@@ -6,35 +7,30 @@
                 v-for="user in users"
                 :key="user.id"
             >
-                <div>
-                    <h2>Профиль пользователя</h2>
-                    <div>
-                        <p>Имя: {{ user.name }}</p>
+
+                <router-link class="flex w-full" :to="{ name: 'user.show', params: { id: user.id } }">
+                    <div class="flex">
                         <div v-if="user.avatar">
-                            <img
-                                :src="user.avatar.path"
-                                alt="Аватар пользователя"
-                                style="max-width: 100px"
+                            <img class="rounded-full"
+                                 :src="user.avatar.path"
+                                 alt="Аватар пользователя"
+                                 style="max-width: 100px"
                             />
                         </div>
                         <div v-else>
-                            <p>Аватар не загружен</p>
+                            <img width="100" class="rounded-full" src="../../../../public/storage/404.jpg" alt="">
                         </div>
                     </div>
-                </div>
-                <router-link :to="{ name: 'user.show', params: { id: user.id } }">
-                    <p>{{ user.id }}</p>
-                    <p>{{ user.name }}</p>
-                    <p>{{ user.email }}</p>
+                    <p class="m-auto">{{ user.name }}</p>
                 </router-link>
                 <a
                     @click.prevent="toggleFollowing(user)"
                     :class="[
-                    'block p-2 w-32 text-center text-sm rounded-3xl',
-                    user.is_followed
-                      ? 'bg-white text-sky-500 border border-sky-500'
-                      : 'bg-sky-500 text-white',
-                  ]"
+            'block p-2 w-32 text-center text-sm rounded-3xl',
+            user.is_followed
+              ? 'bg-white text-sky-500 border border-sky-500'
+              : 'bg-sky-500 text-white',
+          ]"
                     href="#"
                 >
                     {{ user.is_followed ? "Unfollowed" : "Follow" }}
@@ -46,6 +42,7 @@
 
 <script>
 import AvatarUpload from "../../components/AvatarUpload.vue";
+import Loader from "../../components/Loader.vue";
 
 export default {
     name: "Index",
@@ -53,9 +50,11 @@ export default {
     data() {
         return {
             users: [],
+            loading: false,
         };
     },
     components: {
+        Loader,
         AvatarUpload,
     },
     mounted() {
@@ -63,12 +62,17 @@ export default {
     },
 
     methods: {
-        getUsers() {
-            axios
-                .get("/api/users/")
-                .then((res) => {
-                    this.users = res.data.data;
-                });
+        async getUsers() {
+            this.loading = true;
+            try {
+                const response = await axios.get("/api/users/");
+                this.users = response.data.data;
+            } catch (error) {
+                console.error("Ошибка загрузки данных пользователей:", error);
+                // Обработка ошибок, если необходимо
+            } finally {
+                this.loading = false;
+            }
         },
         toggleFollowing(user) {
             axios

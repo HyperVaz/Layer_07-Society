@@ -1,13 +1,18 @@
 <template>
     <div class="w-96 mx-auto">
-        <Stat :stats="stats"></Stat>
-<!--        // AVATAR-->
-        <div>
-            <h2>Профиль пользователя</h2>
+        <Loader :loading="loading" />
+        <div class="text-center">
+            <h2>Добро пожаловать,</h2>
             <div v-if="user">
-                <p>Имя: {{ user.name }}</p>
+                <p>{{ user.name }} !</p>
                 <div v-if="user.avatar">
-                    <img :src="userAvatar" alt="Аватар пользователя" style="max-width: 100px;" />
+                    <a  @click.prevent="openGallery(userAvatar), user.name">
+                        <img class="cursor-pointer m-auto rounded-3xl mb-10" :src="userAvatar"
+                             alt="Аватар пользователя"
+                             style="max-width:
+                    300px;" /> </a>
+                    <GalleryModal :imageUrl="currentImageUrl" :imageTitle="currentImageTitle"
+                                  :userName="user.name" :isOpen="isGalleryOpen" @close="closeGallery"/>
                 </div>
                 <div v-else>
                     <p>Аватар не загружен</p>
@@ -17,7 +22,7 @@
                 <p>Загрузка...</p>
             </div>
         </div>
-<!--        //-->
+        <Stat :stats="stats"></Stat>
         <div>
             <input v-model="title" class="w-96 mb-5 rounded-3xl border p-2 border-slate-300" type="text"
                    placeholder="Write your post title!">
@@ -71,6 +76,8 @@
 import Post from "../../components/Post.vue";
 import Stat from "../../components/Stat.vue";
 import AvatarUpload from '../../components/AvatarUpload.vue';
+import Loader from "../../components/Loader.vue";
+import GalleryModal from "../../components/GalleryModal.vue";
 
 export default {
     name: "Personal",
@@ -84,11 +91,15 @@ export default {
             stats: [],
             user: null,
             userAvatar: null,
-
+            loading: false,
+            isGalleryOpen: false,
+            currentImageUrl: '',
+            currentImageTitle: '',
+            currentUserName: '',
         }
     },
     components: {
-        Post, Stat, AvatarUpload,
+        Post, Stat, AvatarUpload,Loader, GalleryModal
     },
     async mounted() {
         this.getPosts();
@@ -98,6 +109,7 @@ export default {
     },
     methods: {
         async getAvatars(){
+            this.loading = true
             try{
                 const response = await axios.get('/api/user', {
                     headers: {
@@ -110,8 +122,9 @@ export default {
                 }
             } catch(error) {
                 console.error('Ошибка загрузки данных пользователя:', error)
-            }
-           
+            }finally {
+                this.loading = false;}
+
         },
         getStats() {
             axios.post('/api/users/stats', { id: null })
@@ -156,6 +169,16 @@ export default {
                     this.image = res.data.data;
                 })
         },
+
+        openGallery(imageUrl, imageTitle, userName){
+            this.currentImageUrl = imageUrl;
+            this.currentImageTitle = imageTitle;
+            this.currentUserName = userName;
+            this.isGalleryOpen = true;
+        },
+        closeGallery(){
+            this.isGalleryOpen = false;
+        }
 
 
     }
