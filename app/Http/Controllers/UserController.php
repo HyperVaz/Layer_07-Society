@@ -9,13 +9,14 @@ use App\Models\Post;
 use App\Models\SubscriberFollowing;
 use App\Models\User;
 use http\Client\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
     public function index()
     {
-        $users = User::whereNot('id', auth()->id())->get();
+        $users = User::with('avatar')->whereNot('id', auth()->id())->get(); // Загружаем аватары
         $followingIds = SubscriberFollowing::where('subscriber_id', auth()->id())
             ->get('following_id')->pluck('following_id')->toArray();
 
@@ -85,45 +86,17 @@ class UserController extends Controller
 
     }
 
-    public function uploadAvatar(Request $request, $userId)
+    public function show()
     {
-        $request->validateImage([
-            'avatar' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Проверьте тип и размер
-        ]);
+        $user = Auth::user()->load('avatar');
 
-        $user = User::findOrFail($userId);
-
-        if ($request->hasFile('avatar')) {
-            $image = $request->file('avatar');
-            $filename = uniqid() . '.' . $image->getClientOriginalExtension();
-            $path = 'avatars/' . $user->id;
-            $disk = 'public';
-
-
-            // Сохраняем изображение с использованием Storage::disk
-            Storage::disk($disk)->putFileAs($path, $image, $filename);
-
-            // Удаляем предыдущий аватар, если он существует
-            if ($user->avatar) {
-                Storage::disk($user->avatar->disk)->delete($user->avatar->path . '/' . $user->avatar->filename);
-                $user->avatar()->delete();
-            }
-
-
-            //  Создание аватара
-            $avatar = new \App\Models\Avatar([
-                'filename' => $filename,
-                'path' => $path,
-                'disk' => $disk,
-            ]);
-
-            $user->avatar()->save($avatar);
-
-            // Возвращаем URL нового аватара (для обновления в frontend)
-            return response()->json(['avatar_url' => Storage::disk($disk)->url($path . '/' . $filename)], 200);
+        if(!$user) {
+            return response()->json(['message' => 'Пользователь не найден'], 404);
         }
 
-        return response()->json(['message' => 'Ошибка загрузки аватара'], 400);
+
+        return response()->json(['user' => $user]);
     }
+
 }
 

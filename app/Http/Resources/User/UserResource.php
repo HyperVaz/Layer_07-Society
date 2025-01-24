@@ -18,6 +18,9 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
+            'avatar' => $this->avatar ? [
+                'path' => asset('storage/'.$this->avatar->path)
+            ] : null,
             'is_followed' => $this->is_followed ?? false,
         ];
     }

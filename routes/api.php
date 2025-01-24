@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AvatarController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -35,6 +37,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/posts/{post}/comment', [\App\Http\Controllers\PostController::class, 'comment']);
     Route::get('/posts/{post}/comment', [\App\Http\Controllers\PostController::class, 'commentList']);
 
-    Route::get('/api/users/{userId}/avatar', [\App\Http\Controllers\UserController::class, 'uploadAvatar']);
+    Route::post('/avatars', [AvatarController::class, 'store']);
+    Route::get('/user', [UserController::class, 'show']);
 });
 

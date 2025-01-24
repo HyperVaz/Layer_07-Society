@@ -1,6 +1,23 @@
 <template>
     <div class="w-96 mx-auto">
         <Stat :stats="stats"></Stat>
+<!--        // AVATAR-->
+        <div>
+            <h2>Профиль пользователя</h2>
+            <div v-if="user">
+                <p>Имя: {{ user.name }}</p>
+                <div v-if="user.avatar">
+                    <img :src="userAvatar" alt="Аватар пользователя" style="max-width: 100px;" />
+                </div>
+                <div v-else>
+                    <p>Аватар не загружен</p>
+                </div>
+            </div>
+            <div v-else>
+                <p>Загрузка...</p>
+            </div>
+        </div>
+<!--        //-->
         <div>
             <input v-model="title" class="w-96 mb-5 rounded-3xl border p-2 border-slate-300" type="text"
                    placeholder="Write your post title!">
@@ -53,6 +70,7 @@
 <script>
 import Post from "../../components/Post.vue";
 import Stat from "../../components/Stat.vue";
+import AvatarUpload from '../../components/AvatarUpload.vue';
 
 export default {
     name: "Personal",
@@ -64,17 +82,37 @@ export default {
             posts: [],
             errors: [],
             stats: [],
+            user: null,
+            userAvatar: null,
 
         }
     },
     components: {
-        Post, Stat
+        Post, Stat, AvatarUpload,
     },
-    mounted() {
+    async mounted() {
         this.getPosts();
         this.getStats();
+        this.getAvatars();
+
     },
     methods: {
+        async getAvatars(){
+            try{
+                const response = await axios.get('/api/user', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    }
+                });
+                this.user = response.data.user;
+                if(this.user.avatar){
+                    this.userAvatar = `/storage/${this.user.avatar.path}`;
+                }
+            } catch(error) {
+                console.error('Ошибка загрузки данных пользователя:', error)
+            }
+           
+        },
         getStats() {
             axios.post('/api/users/stats', { id: null })
                 .then(res => {

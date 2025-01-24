@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
@@ -60,7 +61,7 @@ class User extends Authenticatable
 
     public function avatar(): HasOne
     {
-        return $this->hasOne(Avatar::class); // Связь один к одному с моделью Avatar
+        return $this->hasOne(Avatar::class);
     }
 
 
