@@ -34,11 +34,22 @@ const router = createRouter({
             component: () => import('../views/user/Personal.vue'),
             name: 'user.personal'
         },
+        {
+            path: '/privacy-policy',
+            component: ()=>import('../components/PrivacyPolicy.vue'),
+            name: 'privacy-policy',
+
+        },
 
     ]
 });
 
 router.beforeEach((to, from, next) => {
+    // Проверка аутентификации не нужна для страницы "privacy-policy"
+    if (to.name === 'privacy-policy') {
+        return next();
+    }
+
     axios.get('/api/user')
         .catch(e => {
             if (e.response.status === 401) {
@@ -49,19 +60,21 @@ router.beforeEach((to, from, next) => {
     const token = localStorage.getItem('x_xsrf_token');
 
     if (!token) {
-        if (to.name === 'user.login' || to.name === 'user.registration') {
+        if (to.name === 'user.login'  || to.name === 'user.registration') {
             return next();
         } else {
             return next({name: 'user.login'});
         }
     }
 
-    if (to.name === 'user.login' || to.name === 'user.registration' && token) {
+    if ((to.name === 'user.login'  || to.name === 'user.registration') && token) {
         return next({name: 'user.personal'});
     }
 
+
     next();
 });
+
 
 
 export default router;

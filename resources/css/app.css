@@ -113,6 +113,42 @@ nav .nav{
     white-space: nowrap; /* Запрещаем перенос строки */
     line-height: 1.6;
 }
+.container__policy{
+    width: 100%;
+}
 
+@media (max-width: 950px) {
+    html{
+        font-size: 12px;
+    }
+    .logo img{
+        width: 90%;
+    }
+    .container{
+        width: 90%;
+    }
+    nav{
+        flex-wrap: wrap;
+    }
+    .nav__link{
+        margin-top: 15px;
+    }
+    .footer{
+        font-size: 9px;
+    }
+    .personal_user_avatar{
+        width: 70%;
+    }
+    .pre_posts{
+        font-size: 25px;
+        margin-top: 25px;
+    }
+    .post_image{
+        width: 50%;
+    }
+    .footer{
+        height: 100px;
+    }
+}
 
 

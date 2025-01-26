@@ -7,15 +7,17 @@
                 <p>{{ user.name }} !</p>
                 <div v-if="user.avatar">
                     <a  @click.prevent="openGallery(userAvatar), user.name">
-                        <img class="cursor-pointer m-auto rounded-3xl mb-10" :src="userAvatar"
+                        <img class="cursor-pointer m-auto rounded-3xl mb-10 personal_user_avatar" :src="userAvatar"
                              alt="Аватар пользователя"
                              style="max-width:
                     300px;" /> </a>
                     <GalleryModal :imageUrl="currentImageUrl" :imageTitle="currentImageTitle"
                                   :userName="user.name" :isOpen="isGalleryOpen" @close="closeGallery"/>
                 </div>
-                <div v-else>
-                    <p>Аватар не загружен</p>
+                <div class="m-auto" v-else>
+                    <img width="100" class="rounded-full m-auto w-5/12 mb-10 mt-10"
+                         src="../../../../public/storage/404.jpg"
+                         alt="">
                 </div>
             </div>
             <div v-else>
@@ -58,15 +60,16 @@
             </div>
         </div>
         <div v-if="image">
-            <img :src="image.url" alt="preview">
+            <img :src="image.url" alt="preview" class="post_image">
             <a class="text-red-600" v-if="image" @click.prevent="image = null" href="#">Cancel/back</a>
         </div>
     </div>
 
     <div v-if="posts">
-        <h1 class="post__text mb-8 pb-8 border-b border-gray-400 text-center">Your posts</h1>
+        <h1 class="post__text mb-8 pb-8 border-b border-gray-400 text-center pre_posts">Your posts</h1>
         <Post v-for="post in posts" :post="post"></Post>
     </div>
+
 
 
 </template>

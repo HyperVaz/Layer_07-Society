@@ -10,14 +10,14 @@
 
                 <router-link class="flex w-full" :to="{ name: 'user.show', params: { id: user.id } }">
                     <div class="flex">
-                        <div v-if="user.avatar">
+                        <div class="user_avatar" v-if="user.avatar">
                             <img class="rounded-full"
                                  :src="user.avatar.path"
                                  alt="Аватар пользователя"
                                  style="max-width: 100px"
                             />
                         </div>
-                        <div v-else>
+                        <div class="user_avatar" v-else>
                             <img width="100" class="rounded-full" src="../../../../public/storage/404.jpg" alt="">
                         </div>
                     </div>
